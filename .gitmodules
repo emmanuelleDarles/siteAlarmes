@@ -1,0 +1,6 @@
+[submodule "themes/rTheme"]
+	path = themes/rTheme
+	url = https://github.com/statnmap/hugo-future-imperfect/
+[submodule "themes/ananke"]
+	path = themes/ananke
+	url = https://github.com/theNewDynamic/gohugo-theme-ananke.git

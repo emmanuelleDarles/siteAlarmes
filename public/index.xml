@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Association Maths-Alarmes</title>
+    <link>/</link>
+    <description>Recent content on Association Maths-Alarmes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 16 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Analyse comparative de la mortalité en France de 2010 à 2020</title>
+      <link>/articles/analyse_comparative_de_la_mortalite_en_france_de_2010_a_2020/analyse-comparative-de-la-mortalite-en-france-de-2010-a-2020pour-alarmesv3/</link>
+      <pubDate>Fri, 16 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/articles/analyse_comparative_de_la_mortalite_en_france_de_2010_a_2020/analyse-comparative-de-la-mortalite-en-france-de-2010-a-2020pour-alarmesv3/</guid>
+      <description>Analyse comparative de la mortalité comparative de 2010 à 2020 Les chiffres sur lesquels nous nous appuyons sont indiscutables et nos calculs, reproductibles, aisément vérifiables. Les données de ces calculs peuvent être téléchargées ici
+1. Observations et synthèse 1.1 Une augmentation des décès et des taux de mortalités, due pour l’essentiel au vieillissement de la population  L’INSEE met en évidence une croissance des décès et du taux global de mortalité  Ce constat est en effet observé sur les données brutes de taux de mortalités</description>
+    </item>
+    
+    <item>
+      <title>Estimation des surmortalités significatives</title>
+      <link>/articles/moissoneffectpart2/moissoneffectpart2/</link>
+      <pubDate>Fri, 02 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/articles/moissoneffectpart2/moissoneffectpart2/</guid>
+      <description>Estimation des surmortalités significatives Ce document a été présenté par Vincent dans le live du dernier Conseil Scientifique Indépendant (Séance du 15 avril) dont l&amp;rsquo;intégralité est disponible sur YouTube : https://www.youtube.com/watch?v=ZKGGAXDRVzI
+L&amp;rsquo;ensemble de l&amp;rsquo;article est disponible ici : https://colab.research.google.com/drive/1TGhYXE7F9LnXavVcvgSa7_PyXGa-lElF
+Vous pouvez faire tourner le code en direct (il n&amp;rsquo;y a pas besoin d&amp;rsquo;installer quoi que ce soit sur votre machine, seul un compte Google est requis).</description>
+    </item>
+    
+    <item>
+      <title>Evolution du taux de mortalité en France métropolitaine</title>
+      <link>/articles/moissoneffectpart1/moissoneffectpart1/</link>
+      <pubDate>Fri, 02 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/articles/moissoneffectpart1/moissoneffectpart1/</guid>
+      <description>Evolution du taux de mortalité en France métropolitaine Ce document est le travail présenté par Vincent dans le live du dernier Conseil Scientifique Indépendant (séance du 15 avril) dont l&amp;rsquo;intégralité est disponible sur YouTube : https://www.youtube.com/watch?v=ZKGGAXDRVzI
+L&amp;rsquo;ensemble de l&amp;rsquo;article est disponible ici : https://colab.research.google.com/drive/1Is6kNWSluEkwcU_uqIsf7q0p5L4DqH2v
+Vous pouvez faire tourner le code en direct (il n&amp;rsquo;y a pas besoin d&amp;rsquo;installer quoi que ce soit sur votre machine, seul un compte Google est requis).</description>
+    </item>
+    
+    <item>
+      <title>Interface de saisie des données</title>
+      <link>/operationoxychild/presentation/saisie/</link>
+      <pubDate>Fri, 02 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/operationoxychild/presentation/saisie/</guid>
+      <description>Je suis un parent :  Je prépare mes documents :  la RGPD signée par le responsable légal acceptant le recueil et la transmission des données à l&amp;rsquo;association Maths-Alarmes    Je suis un soignant :  Je m&amp;rsquo;identifie en cliquant sur &amp;ldquo;Saisir un relevé&amp;rdquo; Je saisie les mesures à la sortie de l&amp;rsquo;école (l&amp;rsquo;enfant doit conserver son masque) Je saisie les mesures 15mn après la sortie de l&amp;rsquo;école (l&amp;rsquo;enfant doit avoir enlever son masque après la première mesure) Un tutoriel est à disposition sur le site de saisie.</description>
+    </item>
+    
+    <item>
+      <title>le Covid19 et les enfants</title>
+      <link>/articles/comparaison_pathologies_infantiles_covid/comparaison_patho_moins_15/</link>
+      <pubDate>Fri, 02 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/articles/comparaison_pathologies_infantiles_covid/comparaison_patho_moins_15/</guid>
+      <description>Introduction Ce document présente une comparaison de la sévérité des pathologies pédiatriques courantes (grippe, gastro-entérite, pneumopathie, bronchiolite et asthme) par rapport au Covid19 chez les enfants de moins de 15 ans.
+Cette étude est entièrement reproductible. L&amp;rsquo;ensemble du code (script RMarkdown et les données) est téléchargeable :
+ Fichier de données Script RMarkdown avec code source Téléchargez l&amp;rsquo;article complet au format pdf  Nous comparons ici les taux d’hospitalisation brut défini comme étant le rapport entre le nombre quotidien de passages aux urgences avec un diagnostic médical posé par les urgentistes parmi l’ensemble des passages aux urgences avec un diagnostic médical renseigné.</description>
+    </item>
+    
+    <item>
+      <title>Présentation de l&#39;opération Oxychild</title>
+      <link>/operationoxychild/presentation/presentation/</link>
+      <pubDate>Fri, 02 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/operationoxychild/presentation/presentation/</guid>
+      <description>Pourquoi cette opération ? L&amp;rsquo;opération Oxychild a été initiée par le collectif Reaction19 et lancée par Maitre Carlo Brusa. Cette opération vise à collecter des données dont le but est de
+En association avec les collectifs unis d&amp;rsquo;Enfance &amp;amp; Libertés, nous avons décidé de mener une action similaire afin de collecter des données et d&amp;rsquo;étudier de façon statistique l&amp;rsquo;impact du port du masque en milieu scolaire à l&amp;rsquo;école.
+Le protocole de recueil a été conçu par les médecins du collectifs Reinfo-Covid.</description>
+    </item>
+    
+    <item>
+      <title>Connexion à l&#39;espace membre</title>
+      <link>/membres/membre/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/membres/membre/</guid>
+      <description>en cours de construction</description>
+    </item>
+    
+  </channel>
+</rss>

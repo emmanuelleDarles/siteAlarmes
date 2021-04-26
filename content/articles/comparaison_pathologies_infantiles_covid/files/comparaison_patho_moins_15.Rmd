@@ -1,0 +1,838 @@
+---
+title: "Comparaison de la sévérité des pathologies pédiatriques par rapport au Covid19 chez les enfants"
+author: "Vincent Pavan - Lana Gitrun (pseudonyme)"
+date: "26/03/2021"
+output:
+  bookdown::markdown_document2 :
+    fig_caption : yes
+    number_sections : false
+  bookdown::pdf_document2: 
+    fig_caption: yes
+    number_sections: false
+  bookdown::word_document2: 
+    fig_caption: yes
+  bookdown::html_document2: 
+    fig_caption: yes
+    number_sections: false
+bibliography: biblio.bib
+csl: style.csl
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Ce document présente une comparaison de la sévérité des pathologies
+pédiatriques courantes (grippe, gastro-entérite, pneumopathie,
+bronchiolite et asthme) par rapport au Covid19 chez les enfants de moins
+de 15 ans.
+
+Nous comparons ici les taux d'hospitalisation brut défini comme étant le
+rapport entre le nombre quotidien de passages aux urgences avec un
+diagnostic médical posé par les urgentistes parmi l'ensemble des
+passages aux urgences avec un diagnostic médical renseigné. Cette
+proportion est exprimée pour 10 000 consultations.
+
+Les données sont issues des du réseau "Oscour" de Santé publique France
+disponibles sur l'interface Géodes
+(<https://geodes.santepubliquefrance.fr/>) pour la tranche d'âge
+0-14ans.
+
+Pour chaque pathologie, nous sélectionnons dans l'interface le type de
+pathologie, puis le taux d'hospitalisation hebdomadaire, les données
+correspondant à la tranche d'âge 0-14 ans puis le format "données".
+
+Concernant les décès, nous donnons à titre de comparaison le nombre de
+décès dû à la grippe par rapport à ceux du Covid19 pour les enfants de
+moins de 15 ans dont ceux avec comorbidité associée.
+
+```{r message=TRUE, warning=TRUE, include=FALSE, paged.print=TRUE}
+install.packages('plyr', repos = "http://cran.us.r-project.org")
+install.packages("reticulate", repos = "http://cran.us.r-project.org")
+library("reticulate")
+py_install(packages ="pandas")
+py_install(packages ="openpyxl")
+py_install(packages ="numpy")
+py_install(packages = "matplotlib")
+install.packages("drc",repos = "http://cran.us.r-project.org")
+library(drc)
+citation("drc")
+```
+
+## Comparaison des taux d'hospitalisation brut
+
+```{python include=FALSE}
+import matplotlib.pyplot as plt
+import random
+import pandas as pandas
+import openpyxl
+import os
+list_patho = ["Grippe", "Gastro-enterite", "Pneumopathie", "Bronchiolite","Asthme","Bronchite_aigue", "Covid19"]
+list_df = []
+for patho in list_patho :
+  df = pandas.read_excel(os.getcwd()+"/patho.xlsx", sheet_name=patho,engine = "openpyxl")
+  list_df.append(df)
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+colors = [(121/255.,28/255.,248/255.), (253/255.,63/255.,246/255.), (20/255.,148/255.,20/255.), (102/255.,0,153/255.), (0/255.,204/255.,203/255.), (0,0,0),(1,0,0)]
+# On commence en semaine 01 de l'année 2018
+index_start = 421
+xlabels = []
+fontweight = 'bold'
+ax = plt.subplot(1,1,1)
+for i in range(index_start,len(list_df[0]['Indicateurs']),4):
+  label = list_df[0]['Indicateurs'][i]
+  xlabels.append(label)
+#plt.gca().yaxis.grid(True, which = 'both', color = 'gray', linestyle='--', zorder = 0)
+#plt.gca().xaxis.grid(True, which = 'both', color = 'gray', linestyle='--', zorder = 0)
+for i in range(0,len(list_df)):
+  if i==len(list_df)-1 : index_start = 0
+  ax.plot(list_df[i]['Indicateurs'][index_start:],list_df[i]['Valeur'][index_start:],color=colors[i],label=list_patho[i],linewidth=3)
+plt.xticks(xlabels,rotation=45, fontsize="12")
+plt.yticks(fontsize="12")
+plt.grid()
+plt.ylabel("Taux d'hospitalisation brut\n (pour 10 000 hospitalisations)",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.title("Taux d'hospitalisation par pathologie chez les moins de 15 ans",fontsize="25",weight='bold')
+plt.savefig("pathologie_moins_15ans.png")
+```
+
+```{r pathoAll, echo=FALSE, fig.cap="Evolution du taux d'hospitalisation chez les moins de 15 ans pour les pathologies les plus courantes"}
+knitr::include_graphics("pathologie_moins_15ans.png")
+```
+
+**Nous pouvons constater que sur l'année 2020 (Figure**
+\@ref(fig:pathoAll))
+
+-   les pathologies dûes à l'asthme sont restées sur un plateau très
+    élévé
+
+-   les pathologies dûes aux pneumopathies et aux bronchites aigues ont atteint des niveaux très
+    importants
+
+-   les hospitalisations dûes aux Covid19 sont sensiblement au même
+    niveau que celle des gastro-enterites et sont largement en dessous
+    de celles de l'asthme, des pneumopathies ou des bronchiolites.
+
+## Comparaison des hospitalisations de l'année 2020 dûes aux pneumopathies par rapport aux autres années chez les enfants
+
+### Comparaison avec les années précédentes
+
+Nous pouvons constater que le nombre d'hospitalisation en 2020 dû à des
+pneumopathies chez les enfants est largement au dessus des années
+précédentes (Figure \@ref(fig:pneumo)).
+
+La chute brutale des hospitalisations à partir de la semaine 17 peut
+être expliquée par plusieurs hypothèses : abandon de soin (peur de la
+population de se rendre à l'hôpital), réduction de la pollution et des
+particules finies. Cette chute brutale (anormale sur la plan statistique
+comparé aux années précédentes) se compense par la hausse des
+hospitalisations observées au déconfinement (ce qui traduirait donc une
+reprise en charge de ces pathologies non soignées au moment du
+confinement).
+
+Nous pouvons constater que par la suite les taux d'hospitalisation de
+l'année 2020 se sont rapprochés des taux des années précédentes de la
+semaine 30 à la semaine 36. Cependant, en semaine 36 on observe un
+décrochage de la courbe avec une très nette augmentation de celle-ci et
+créant un écart important avec les taux des années précédentes, qui
+manifestement, ne se réduit pas à la fin de l'année 2020.
+
+```{python include=FALSE}
+import matplotlib.pyplot as plt
+import random
+import pandas as pandas
+import openpyxl
+import os
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+# On commence en semaine 01 de l'année 2018
+xlabels = []
+y = [[],[],[],[],[]]
+fontweight = 'bold'
+index = 2
+for i in range(0,len(list_df[index]['Indicateurs'])):
+  label = list_df[index]['Indicateurs'][i]
+  year = int(label[0:4])
+  label = int(label[6:])
+  if label not in xlabels and label!=53: xlabels.append(label)
+  if year == 2020 and label!=53: 
+    y[0].append(list_df[index]['Valeur'][i])
+  if year == 2019 and label!=53: 
+    y[1].append(list_df[index]['Valeur'][i])
+  if year == 2018 and label!=53 : 
+    y[2].append(list_df[index]['Valeur'][i])
+  if year == 2017 and label!=53: 
+    y[3].append(list_df[index]['Valeur'][i])
+  if year == 2016 and label!=53: 
+    y[4].append(list_df[index]['Valeur'][i])
+ax = plt.subplot(1,1,1)
+ax.plot(xlabels,y[0],color="red",linewidth=5,label="Année 2020")
+ax.plot(xlabels,y[1],color="blue",linewidth=4,label="Année 2019")
+ax.plot(xlabels,y[2],color="darkorange",linewidth=4,label="Année 2018",linestyle="--")
+ax.plot(xlabels,y[3],color="limegreen",linewidth=4,label="Année 2017")
+ax.plot(xlabels,y[4],color="darkorchid",linewidth=4,label="Année 2016",linestyle="--")
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.yticks(fontsize="20")
+plt.ylabel("Taux d'hospitalisation brut",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+
+plt.grid()
+plt.title("Taux d'hospitalisation dû aux pneumopathies chez les moins de 15 ans sur l'année",fontsize="25",weight='bold')
+plt.savefig("pneumo_annee.png")
+```
+
+```{r pneumopathie, echo=FALSE, fig.cap="Comparaison par année du taux d'hospitalisation dû aux pneumopathies chez les moins de 15 ans"}
+knitr::include_graphics("pneumo_annee.png")
+```
+
+### Comparaison par groupe d'âge
+
+Nous comparons ici l'évolution du taux d'hospitalisation chez les
+enfants par rapport à ceux des groupes d'âge 15-64 ans et $\ge$ 65 ans
+pour l'année 2020 afin de constater l'écart de l'évolution de 2020 sur
+l'ensemble des groupes d'âges.
+
+Afin de tenir compte de l'écart d'amplitude de classes d'âge de chacun
+des groupes d'âge, nous divisons par la population totale correspondant
+à chaque groupe d'âge. Le calcul de ces populations de groupe d'âge est
+issu des données des pyramides des âges au 1er janvier de chaque année
+considérée et produites par l'Insee
+(<https://www.insee.fr/fr/statistiques/5007688?sommaire=5007726>)
+
+| Groupe d'âge | 2020       | 2019       | 2018       |
+|:-------------|:-----------|:-----------|:-----------|
+| 0-14 ans     | 12 032 908 | 12 707 443 | 12 172 566 |
+| 15-65 ans    | 41 520 403 | 41 588 985 | 41 652 795 |
+| $\ge$ 65 ans | 13 733 900 | 13 447 773 | 13 166 798 |
+
+Nous constatons que cet écart du taux d'hospitalisation au regard des
+années précédentes est le plus important chez les enfants que tous les
+autres groupes d'âges (Figure \@ref(fig:comp1Pneumo)) avec **34555
+hospitalisations de plus au total sur l'année 2020** comparé à la
+moyenne des 2 années précédentes, contre **7731 chez les 15-64 ans** et
+**-5996 sur la tranche d'âge des plus de 64 ans** (solde négatif
+traduisant que les périodes de hausses sont rattrapées par les périodes
+de baisse de façon plus importante) en normalisant sur le nombre de
+personnes du groupe d'âge 0-14 ans afin de tenir compte des disparité du
+nombre de personnes dans chaque groupe d'âge.
+
+Avec un ratio de 1 à 5 comparé au groupe d'âge des 0-64 ans (Figure
+\@ref(fig:comp2Pneumo)) (pour le même nombre de personnes), cette hausse
+très importante d'hospitalisations de pneumopathies chez les enfants est
+absente les années précédentes (Figure \@ref(fig:comp1Pneumo)).
+
+\newpage
+
+```{python include=FALSE}
+import matplotlib.pyplot as plt
+import random
+import pandas as pandas
+import openpyxl
+import os
+PA20 = [12032908, 41520403,13733900] 
+PA19 = [12707433,41588985,13447773] 
+PA18=[12172566, 41652795,13166798]
+dfPneumo_15_65 = pandas.read_excel(os.getcwd()+"/patho.xlsx", sheet_name="Pneumopathie_15_64ans",engine = "openpyxl")
+dfPneumo_65 = pandas.read_excel(os.getcwd()+"/patho.xlsx", sheet_name="Pneumopathie_64_plus",engine = "openpyxl")
+xLabels = []
+y0 = [[],[],[]]
+y1 = [[],[],[]]
+y2 = [[],[],[]]
+avg = [[],[],[]]
+for i in range(0,len(list_df[2]['Indicateurs'])):
+  label = list_df[2]['Indicateurs'][i]
+  year = int(label[0:4])
+  semaine = int(label[6:])
+  if year == 2020:
+    if semaine!=53 : 
+      if semaine not in xLabels : xLabels.append(semaine)
+      y0[0].append((list_df[2]['Valeur'][i]/PA20[0]))
+      y1[0].append((dfPneumo_15_65['Valeur'][i]/PA20[1]))
+      y2[0].append((dfPneumo_65['Valeur'][i]/PA20[2]))
+  if year == 2019 : 
+    if semaine!=53 :
+      y0[1].append((list_df[2]['Valeur'][i]/PA19[0]))
+      y1[1].append((dfPneumo_15_65['Valeur'][i]/PA19[1]))
+      y2[1].append((dfPneumo_65['Valeur'][i]/PA19[2]))
+  if year == 2018 : 
+    if semaine!=53 :
+      y0[2].append((list_df[2]['Valeur'][i]/PA18[0]))
+      y1[2].append((dfPneumo_15_65['Valeur'][i]/PA18[1]))
+      y2[2].append((dfPneumo_65['Valeur'][i]/PA18[2]))
+for i in range(0,len(y0[0])):
+  avg[0].append((y0[1][i]+y0[2][i])/2)
+  avg[1].append((y1[1][i]+y1[2][i])/2)
+  avg[2].append((y2[1][i]+y2[2][i])/2)
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+ax = plt.subplot(1,1,1)
+ax.plot(xLabels,y0[0],color="red",label="0-14 ans 2020",linewidth=4)
+ax.plot(xLabels,y0[1],color="red",label="0-14 ans 2019",linestyle="--",linewidth=3)
+ax.plot(xLabels,y0[2],color="red",label="0-14 ans 2018",linestyle="-.",linewidth=3)
+ax.fill_between(xLabels, y0[1], y0[2], color=(1,0,0,0.2))
+
+ax.plot(xLabels,y1[0],color="blue",label="15-65 ans 2020",linewidth=4)
+ax.plot(xLabels,y1[1],color="blue",linestyle="--",label="15-65 ans 2019",linewidth=3)
+ax.plot(xLabels,y1[2],color="blue",linestyle="-.",label="15-65 ans 2018",linewidth=3)
+ax.fill_between(xLabels, y1[1], y1[2], color=(0,0,1,0.2))
+
+ax.plot(xLabels,y2[0],color="green",label="65 ans et + 2020",linewidth=4)
+ax.plot(xLabels,y2[1],color="green",linestyle="--",label="65 ans et + 2019",linewidth=3)
+ax.plot(xLabels,y2[2],color="green",linestyle="-.",label="65 ans et + 2018",linewidth=3)
+ax.fill_between(xLabels, y2[1], y2[2], color=(0,1,0,0.2))
+
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.grid()
+plt.yticks(fontsize="20")
+plt.ylabel("Taux d'hospitalisation / \nPopulation groupe d'âge",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+plt.title("Comparaison des taux d'hospitalisation pour la pneumopathie par groupe d'âge",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.savefig("pneumo_groupe_age.png")
+```
+
+```{r comp1Pneumo, echo=FALSE, fig.cap="Comparaison par groupe d'âge du taux d'hospitalisation dû aux pneumopathies"}
+knitr::include_graphics("pneumo_groupe_age.png")
+```
+
+```{python include=FALSE}
+diff = [[],[],[]]
+solde = [0,0,0]
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+for i in range(0,len(y0[0])):
+    value = (y0[0][i] - avg[0][i])*PA20[0]
+    solde[0] += value
+    diff[0].append(value)
+for i in range(0,len(y1[0])):
+    value = (y1[0][i] - avg[1][i])*PA20[0]
+    solde[1] += value
+    diff[1].append(value)
+for i in range(0,len(y2[0])):
+    value = (y2[0][i] - avg[2][i])*PA20[0]
+    solde[2] += value
+    diff[2].append(value)
+ax = plt.subplot(1,1,1)
+ax.bar(xLabels,diff[0],color="red",linewidth = 4, label="0-14 ans")
+ax.bar(xLabels,diff[1],color="blue",linewidth = 4, label="15-64 ans")
+ax.bar(xLabels,diff[2],color="green",linewidth = 4, label="65 ans et plus")
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.grid()
+plt.yticks(fontsize="20")
+plt.ylabel("Nombre d'hospitalisation en plus",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.savefig("difference_pneumopathie_age.png")
+print(solde)
+```
+
+```{r comp2Pneumo, echo=FALSE, fig.cap="Nombre d'hospitalisation en plus pour la pneumoptahie par groupe d'âge"}
+knitr::include_graphics("difference_pneumopathie_age.png")
+```
+## Comparaison des hospitalisations de l'années 2020 dûes à la bronchite aigüe par rapport aux années précédentes chez les enfants
+
+### Comparaison avec les années précédentes :
+
+```{python include=FALSE}
+import matplotlib.pyplot as plt
+import random
+import pandas as pandas
+import openpyxl
+import os
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+# On commence en semaine 01 de l'année 2018
+xlabels = []
+y = [[],[],[],[],[]]
+fontweight = 'bold'
+index = 5
+for i in range(0,len(list_df[index]['Indicateurs'])):
+  label = list_df[index]['Indicateurs'][i]
+  year = int(label[0:4])
+  label = int(label[6:])
+  if label not in xlabels and label!=53: xlabels.append(label)
+  if year == 2020 and label!=53: 
+    y[0].append(list_df[index]['Valeur'][i])
+  if year == 2019 and label!=53: 
+    y[1].append(list_df[index]['Valeur'][i])
+  if year == 2018 and label!=53 : 
+    y[2].append(list_df[index]['Valeur'][i])
+  if year == 2017 and label!=53: 
+    y[3].append(list_df[index]['Valeur'][i])
+  if year == 2016 and label!=53: 
+    y[4].append(list_df[index]['Valeur'][i])
+ax = plt.subplot(1,1,1)
+ax.plot(xlabels,y[0],color="red",linewidth=5,label="Année 2020")
+ax.plot(xlabels,y[1],color="blue",linewidth=4,label="Année 2019")
+ax.plot(xlabels,y[2],color="darkorange",linewidth=4,label="Année 2018",linestyle="--")
+ax.plot(xlabels,y[3],color="limegreen",linewidth=4,label="Année 2017")
+ax.plot(xlabels,y[4],color="darkorchid",linewidth=4,label="Année 2016",linestyle="--")
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.yticks(fontsize="20")
+plt.ylabel("Taux d'hospitalisation brut",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+
+plt.grid()
+plt.title("Taux d'hospitalisation dû aux bronchites aigües chez les moins de 15 ans sur l'année",fontsize="25",weight='bold')
+plt.savefig("bronchite_annee.png")
+```
+
+```{r pneumo, echo=FALSE, fig.cap="Comparaison par année du taux d'hospitalisation dû aux bronchites aigües chez les moins de 15 ans"}
+knitr::include_graphics("bronchite_annee.png")
+```
+### Comparaison par groupe d'âge
+
+```{python}
+import matplotlib.pyplot as plt
+import random
+import pandas as pandas
+import openpyxl
+import os
+PA20 = [12032908, 41520403,13733900] 
+PA19 = [12707433,41588985,13447773] 
+PA18=[12172566, 41652795,13166798]
+dfAsthme_15_65 = pandas.read_excel(os.getcwd()+"/patho.xlsx", sheet_name="Bronchite_aigue_15_64",engine = "openpyxl")
+dfAsthme_65 = pandas.read_excel(os.getcwd()+"/patho.xlsx", sheet_name="Bronchite_aigue_64_plus",engine = "openpyxl")
+xLabels = []
+y0 = [[],[],[]]
+y1 = [[],[],[]]
+y2 = [[],[],[]]
+avg =[[],[],[]]
+index = 5
+for i in range(0,len(list_df[index]['Indicateurs'])):
+  label = list_df[index]['Indicateurs'][i]
+  year = int(label[0:4])
+  semaine = int(label[6:])
+  if year == 2020:
+    if semaine!=53 : 
+      if semaine not in xLabels : xLabels.append(semaine)
+      y0[0].append((list_df[index]['Valeur'][i]/PA20[0]))
+      y1[0].append((dfAsthme_15_65['Valeur'][i]/PA20[1]))
+      y2[0].append((dfAsthme_65['Valeur'][i]/PA20[2]))
+  if year == 2019 : 
+    if semaine!=53 :
+      y0[1].append((list_df[index]['Valeur'][i]/PA19[0]))
+      y1[1].append((dfAsthme_15_65['Valeur'][i]/PA19[1]))
+      y2[1].append((dfAsthme_65['Valeur'][i]/PA19[2]))
+  if year == 2018 : 
+    if semaine!=53 :
+      y0[2].append((list_df[index]['Valeur'][i]/PA18[0]))
+      y1[2].append((dfAsthme_15_65['Valeur'][i]/PA18[1]))
+      y2[2].append((dfAsthme_65['Valeur'][i]/PA18[2]))
+for i in range(0,len(y[0])):
+  avg[0].append((y0[1][i]+y0[2][i])/2)
+  avg[1].append((y1[1][i]+y1[2][i])/2)
+  avg[2].append((y2[1][i]+y2[2][i])/2)
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+ax = plt.subplot(1,1,1)
+ax.plot(xLabels,y0[0],color="red",label="0-14 ans 2020",linewidth=4)
+ax.plot(xLabels,y0[1],color="red",label="0-14 ans 2019",linestyle="--",linewidth=3)
+ax.plot(xLabels,y0[2],color="red",label="0-14 ans 2018",linestyle="-.",linewidth=3)
+ax.fill_between(xLabels, y0[1], y0[2], color=(1,0,0,0.2))
+
+ax.plot(xLabels,y1[0],color="blue",label="15-65 ans 2020",linewidth=4)
+ax.plot(xLabels,y1[1],color="blue",linestyle="--",label="15-65 ans 2019",linewidth=3)
+ax.plot(xLabels,y1[2],color="blue",linestyle="-.",label="15-65 ans 2018",linewidth=3)
+ax.fill_between(xLabels, y1[1], y1[2], color=(0,0,1,0.2))
+
+ax.plot(xLabels,y2[0],color="green",label="65 ans et + 2020",linewidth=4)
+ax.plot(xLabels,y2[1],color="green",linestyle="--",label="65 ans et + 2019",linewidth=3)
+ax.plot(xLabels,y2[2],color="green",linestyle="-.",label="65 ans et + 2018",linewidth=3)
+ax.fill_between(xLabels, y2[1], y2[2], color=(0,1,0,0.2))
+
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.grid()
+plt.yticks(fontsize="20")
+plt.ylabel("Taux d'hospitalisation / \nPopulation groupe d'âge",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+plt.title("Comparaison des taux d'hospitalisation pour la bonchite aigüe par groupe d'âge",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.savefig("bronchite_groupe_age.png")
+```
+
+```{r bronchiteComp1, echo=FALSE, fig.cap="Comparaison du taux d'hospitalisation dûe à la bronchite aigüe par groupe d'âge"}
+knitr::include_graphics("bronchite_groupe_age.png")
+```
+
+```{python include=FALSE}
+diff = [[],[],[]]
+solde = [0,0,0]
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+for i in range(0,len(y0[0])):
+    value = (y0[0][i] - avg[0][i])*PA20[0]
+    solde[0] += value
+    diff[0].append(value)
+for i in range(0,len(y1[0])):
+    value = (y1[0][i]- avg[1][i])*PA20[0]
+    solde[1] += value
+    diff[1].append(value)
+for i in range(0,len(y2[0])):
+    value = (y2[0][i] - avg[2][i])*PA20[0]
+    solde[2] += value
+    diff[2].append(value)
+ax = plt.subplot(1,1,1)  
+ax.bar(xLabels,diff[0],color="red",linewidth = 4, label="0-14 ans")
+ax.bar(xLabels,diff[1],color="blue",linewidth = 4, label="15-64 ans")
+ax.bar(xLabels,diff[2],color="green",linewidth = 4, label="65 ans et plus")
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.grid()
+plt.yticks(fontsize="20")
+plt.ylabel("Nombre d'hospitalisation en plus",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.savefig("difference_bronchite_age.png")
+print(solde)
+
+```
+
+```{r bronchiteComp2, echo=FALSE, fig.cap="Nombre d'hospitalisations en plus dû à la bronchite aigüe"}
+knitr::include_graphics("difference_bronchite_age.png")
+```
+## Comparaison des hospitalisations de l'année 2020 dûes à l'asthme par rapport aux autres années chez les enfants
+
+### Comparaison avec les années précédentes :
+
+Les hospitalisations dûes à l'asthme chez les enfants de moins de 15 ans
+sont très élevées au regard des années précédentes et restent sur un
+haut plateau très peu descendant comparé aux autres années (Figure
+\@ref(fig:athme)).
+
+Tout comme pour les pneumopathies, on observe une baisse très nette des
+taux d'hospitalisation durant la période de confinement et anormalement
+basse par rapport aux années précédentes. L'augmentation visible à
+partir de la semaine du déconfinement traduit une reprise en charge
+hospitalière de ces pathologies non traitées durant la période de
+confinement.
+
+Cependant, comme pour les pneumopathies, on observe un écart très franc
+entre les taux de l'année 2020 et ceux des années précédentes à partir
+ici de la semaine 40 (Figure \@ref(fig:athmeComp1)) . Cet écart se
+recreuse à partir de la semaine 45, semaine à laquelle l'obligation du
+port du masque en milieu scolaire à partir de 6 ans a été pratiquée.
+Comme nous pouvons le constater, cet écart ne se réduit pas à la fin de
+l'année et reste constant sur l'ensemble de cette période.
+
+```{python}
+import matplotlib.pyplot as plt
+import random
+import pandas as pandas
+import openpyxl
+import os
+
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+xlabels = []
+xlabels2021 = []
+y = [[],[],[],[],[],[]]
+fontweight = 'bold'
+index = 4
+for i in range(0,len(list_df[index]['Indicateurs'])):
+  label = list_df[index]['Indicateurs'][i]
+  year = int(label[0:4])
+  semaine = label[5:]
+  if year == 2021 and semaine!="S53": 
+    y[5].append(list_df[index]['Valeur'][i])
+    xlabels2021.append(semaine[1:])
+  if year == 2020 and semaine!="S53": 
+    xlabels.append(int(semaine[1:]))
+    y[0].append(list_df[index]['Valeur'][i])
+  if year == 2019 and semaine!="S53" : 
+    y[1].append(list_df[index]['Valeur'][i])
+  if year == 2018 and semaine!="S53" : 
+    y[2].append(list_df[index]['Valeur'][i])
+  if year == 2017 and semaine!="S53": 
+    y[3].append(list_df[index]['Valeur'][i])
+  if year == 2016 and semaine!="S53": 
+    y[4].append(list_df[index]['Valeur'][i])
+ax = plt.subplot(111)
+
+ax.plot(xlabels,y[0],color="red",linewidth=5,label="Année 2020")
+#ax.plot(xlabels2021,y[5],color="red",linestyle = "--", linewidth=5,label="Année 2021")
+ax.plot(xlabels,y[1],color="blue",linewidth=4,label="Année 2019")
+ax.plot(xlabels,y[2],color="darkorange",linestyle="--",linewidth=4,label="Année 2018")
+ax.plot(xlabels,y[3],color="limegreen",linewidth=4,label="Année 2017")
+ax.plot(xlabels,y[4],color="darkorchid",linestyle="--",linewidth=4,label="Année 2016")
+plt.xticks(xlabels,rotation=45, fontsize="15")
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.yticks(fontsize="20")
+plt.ylim(1000,3500)
+ax.grid()
+plt.title("Taux d'hospitalisation dû à l'asthme chez les moins de 15 ans par année",fontsize="25",weight='bold')
+plt.xlabel("Semaine\n",fontsize="25",weight='bold')
+plt.xlim(1,52)
+plt.ylabel("Taux d'hospitalisation brut",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.savefig("asthme_annee2.png")
+```
+
+```{r athme, echo=FALSE, fig.cap="Comparaison par année du taux d'hospitalisation dû à l'asthme chez les moins de 15 ans"}
+knitr::include_graphics("asthme_annee2.png")
+```
+
+### Comparaison par groupe d'âge
+
+Cet écart est le plus grand parmi les autres groupes d'âge pour cette
+même pathologie (Figures \@ref(fig:athmeComp1) et
+\@ref(fig:asthmeComp2)) avec **5067 hospitalisations de plus sur l'année
+2020** comparé à la moyenne des 2 années précédentes, contre **3514 chez
+les 15-64 ans** et **-7736 sur la tranche d'âge des plus de 64 ans en
+normalisant sur le nombre de personnes du groupe d'âge 0-14 ans**.
+
+```{python include=FALSE}
+import matplotlib.pyplot as plt
+import random
+import pandas as pandas
+import openpyxl
+import os
+PA20 = [12032908, 41520403,13733900] 
+PA19 = [12707433,41588985,13447773] 
+PA18=[12172566, 41652795,13166798]
+dfAsthme_15_65 = pandas.read_excel(os.getcwd()+"/patho.xlsx", sheet_name="Asthme_15_64ans",engine = "openpyxl")
+dfAsthme_65 = pandas.read_excel(os.getcwd()+"/patho.xlsx", sheet_name="Asthme_64_plus",engine = "openpyxl")
+xLabels = []
+y0 = [[],[],[]]
+y1 = [[],[],[]]
+y2 = [[],[],[]]
+avg =[[],[],[]]
+for i in range(0,len(list_df[4]['Indicateurs'])):
+  label = list_df[4]['Indicateurs'][i]
+  year = int(label[0:4])
+  semaine = int(label[6:])
+  if year == 2020:
+    if semaine!=53 : 
+      if semaine not in xLabels : xLabels.append(semaine)
+      y0[0].append((list_df[4]['Valeur'][i]/PA20[0]))
+      y1[0].append((dfAsthme_15_65['Valeur'][i]/PA20[1]))
+      y2[0].append((dfAsthme_65['Valeur'][i]/PA20[2]))
+  if year == 2019 : 
+    if semaine!=53 :
+      y0[1].append((list_df[4]['Valeur'][i]/PA19[0]))
+      y1[1].append((dfAsthme_15_65['Valeur'][i]/PA19[1]))
+      y2[1].append((dfAsthme_65['Valeur'][i]/PA19[2]))
+  if year == 2018 : 
+    if semaine!=53 :
+      y0[2].append((list_df[4]['Valeur'][i]/PA18[0]))
+      y1[2].append((dfAsthme_15_65['Valeur'][i]/PA18[1]))
+      y2[2].append((dfAsthme_65['Valeur'][i]/PA18[2]))
+for i in range(0,len(y[0])):
+  avg[0].append((y0[1][i]+y0[2][i])/2)
+  avg[1].append((y1[1][i]+y1[2][i])/2)
+  avg[2].append((y2[1][i]+y2[2][i])/2)
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+ax = plt.subplot(1,1,1)
+ax.plot(xLabels,y0[0],color="red",label="0-14 ans 2020",linewidth=4)
+ax.plot(xLabels,y0[1],color="red",label="0-14 ans 2019",linestyle="--",linewidth=3)
+ax.plot(xLabels,y0[2],color="red",label="0-14 ans 2018",linestyle="-.",linewidth=3)
+ax.fill_between(xLabels, y0[1], y0[2], color=(1,0,0,0.2))
+
+ax.plot(xLabels,y1[0],color="blue",label="15-65 ans 2020",linewidth=4)
+ax.plot(xLabels,y1[1],color="blue",linestyle="--",label="15-65 ans 2019",linewidth=3)
+ax.plot(xLabels,y1[2],color="blue",linestyle="-.",label="15-65 ans 2018",linewidth=3)
+ax.fill_between(xLabels, y1[1], y1[2], color=(0,0,1,0.2))
+
+ax.plot(xLabels,y2[0],color="green",label="65 ans et + 2020",linewidth=4)
+ax.plot(xLabels,y2[1],color="green",linestyle="--",label="65 ans et + 2019",linewidth=3)
+ax.plot(xLabels,y2[2],color="green",linestyle="-.",label="65 ans et + 2018",linewidth=3)
+ax.fill_between(xLabels, y2[1], y2[2], color=(0,1,0,0.2))
+
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.grid()
+plt.yticks(fontsize="20")
+plt.ylabel("Taux d'hospitalisation / \nPopulation groupe d'âge",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+plt.title("Comparaison des taux d'hospitalisation pour l'asthme par groupe d'âge",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.savefig("asthme_groupe_age.png")
+```
+
+```{r athmeComp1, echo=FALSE, fig.cap="Comparaison du taux d'hospitalisation par groupe d'âge"}
+knitr::include_graphics("asthme_groupe_age.png")
+```
+
+```{python include=FALSE}
+diff = [[],[],[]]
+solde = [0,0,0]
+fig = plt.figure()
+fig.set_size_inches(20, 10)
+for i in range(0,len(y0[0])):
+    value = (y0[0][i] - avg[0][i])*PA20[0]
+    solde[0] += value
+    diff[0].append(value)
+for i in range(0,len(y1[0])):
+    value = (y1[0][i]- avg[1][i])*PA20[0]
+    solde[1] += value
+    diff[1].append(value)
+for i in range(0,len(y2[0])):
+    value = (y2[0][i] - avg[2][i])*PA20[0]
+    solde[2] += value
+    diff[2].append(value)
+ax = plt.subplot(1,1,1)  
+ax.bar(xLabels,diff[0],color="red",linewidth = 4, label="0-14 ans")
+ax.bar(xLabels,diff[1],color="blue",linewidth = 4, label="15-64 ans")
+ax.bar(xLabels,diff[2],color="green",linewidth = 4, label="65 ans et plus")
+ax.axvline(12,color="black",linestyle="-",linewidth=3,label="Confinement")
+ax.axvline(20,color="black",linestyle="--",linewidth=3,label="Déconfinement")
+ax.axvline(30,color="slategray",linestyle="--",linewidth=3,label="Port masque extérieur >10 ans")
+ax.axvline(36,color="dimgray",linestyle="--",linewidth=3,label="Rentrée scolaire 2020")
+ax.axvline(45,color="darkgray",linestyle="--",linewidth=3,label="Rentrée vacances Toussaint")
+plt.xticks(xlabels,rotation=45, fontsize="20")
+plt.xlim(1,52)
+plt.grid()
+plt.yticks(fontsize="20")
+plt.ylabel("Nombre d'hospitalisation en plus",fontsize="25",weight='bold')
+plt.xlabel("Semaine",fontsize="25",weight='bold')
+# Shrink current axis by 20%
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+# Put a legend to the right of the current axis
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=15)
+plt.savefig("difference_asthme_age.png")
+print(solde)
+
+```
+
+```{r asthmeComp2, echo=FALSE, fig.cap="Nombre d'hospitalisations en plus dû à l'asthme"}
+knitr::include_graphics("difference_asthme_age.png")
+```
+
+## Hospitalisation en réanimation / soins critiques / soins continus dûs à la grippe versus Covid19 chez les mineurs
+
+### Considérations :
+
+-   **Concernant la grippe :**
+
+    Santé publique France mentionne que :
+
+    -   **12 décès en 2020** dû à la grippe ont été rapportés parmi les
+        mineurs dont **7 avec une ou plusieurs comorbidités**
+        @Grippe2020
+
+    -   **8 décès en 2019** dû à la grippe sont survenus parmi les
+        mineurs dont 4 sans facteur de risque, **3 avec une ou plusieurs
+        comorbidités** et 1 sans information disponible @Grippe2019
+
+    -   **10 décès sont survenus en 2018** parmi les mineurs dont **6
+        avec un facteur de risque**, 3 sans facteur de risque et 1 sans
+        information disponible @Grippe2018
+
+    -   **13 décès** dûs à la grippe sont survenus en 2016 et **36
+        décès** en 2015 @Grippe2012.
+
+-   **Concernant la covid19 :**
+
+    Au 31/12/2020, 4 décès dû à la covid19 sont rapportés chez les 0-9 ans
+    et 6 décès pour les 10-18 ans (soit **10 au total**) @DécèsCovid19
+    dont **3 avec comorbodité** @Covid19Comor.
+    
+## Conclusions
+
+    On peut constater que le Covid19 n'entraîne pas une hausse des
+    hospitalisations ni des décès chez les enfants, les niveaux de ces
+    indicateurs étant similaires à ceux de la grippe et de la
+    gastro-entérites dans ces classes d'âge.
+
+    En revanche, les hospitalisations dûes aux pneumopathies et à
+    l'asthme sont nettement en très forte hausse comparé aux années
+    précédentes. Les écarts créés par l'augmentation des
+    hospitalisations de ces pathologies correspondent aux dates d'entrée
+    en rigueur des mesures sanitaires notamment en milieu scolaire avec
+    **34555 hospitalisations de plus pour les pneumopathies** comparé à
+    la moyenne des deux années précedentes et **5067 hospitalisations
+    pour l'asthme**, **soit 39622 hospitalisations et comptabilisées
+    seulement sur ces deux pathologies** (contre 30291 pour les 15-64
+    ans et -14580 pour les plus de 64 ans)**.**
+
+## Références

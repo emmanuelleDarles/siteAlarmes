@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on Association Maths-Alarmes</title>
+    <link>/categories/</link>
+    <description>Recent content in Categories on Association Maths-Alarmes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 16 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>COVID19</title>
+      <link>/categories/covid19/</link>
+      <pubDate>Fri, 16 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/covid19/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mortalité</title>
+      <link>/categories/mortalit%C3%A9/</link>
+      <pubDate>Fri, 16 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/mortalit%C3%A9/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Enfant</title>
+      <link>/categories/enfant/</link>
+      <pubDate>Fri, 02 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/enfant/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
